@@ -1,0 +1,13 @@
+datasets/
+AdelaiDet.egg-info/
+adet/
+demo/
+configs/
+figs/
+tools/
+build/
+setup.py
+.zip
+output/
+results.zip
+requirements.txt
