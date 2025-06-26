@@ -37,10 +37,10 @@ It's recommended to configure the environment using Anaconda. Python 3.10 + PyTo
 
 - ### Installation
 ```
-conda create -n SRFormer python=3.10 -y
-conda activate SRFormer
+conda create -n SRformer python=3.10 -y
+conda activate SRformer
 pip install torch==1.13.1+cu116 torchvision==0.14.1+cu116 torchaudio==0.13.1 --extra-index-url https://download.pytorch.org/whl/cu116
-pip install opencv-python scipy timm shapely albumentations Polygon3 pyclipper
+pip install opencv-python scipy timm shapely albumentations Polygon3 pyclipper rapidfuzz==2.15.1
 python -m pip install 'git+https://github.com/facebookresearch/detectron2.git'
 pip install setuptools==59.5.0
 
@@ -49,13 +49,9 @@ python setup.py build develop
 ```
 - ### Data Preparation
 
->**SynthText-150K & MLT & LSVT (images):**  [Source](https://github.com/aim-uofa/AdelaiDet/tree/master/datasets) 
+>**MLT:**  [Source](https://github.com/aim-uofa/AdelaiDet/tree/master/datasets) 
 >
 >**Total-Text (including rotated images)**: [OneDrive](https://1drv.ms/u/s!AimBgYV7JjTlgccOW1TUlgm64M0yRA?e=jwY6b1)
->
->**CTW1500 (including rotated images)**: [OneDrive](https://1drv.ms/u/s!AimBgYV7JjTlgccPGEv4DkiUl23MEg?e=44CtL6)
->
->**ICDAR19 ArT (including rotated images)**: [OneDrive](https://1drv.ms/u/s!AtF4kB5K12hqgVufZu390bfiaHMf?e=20VN6D)
 >
 >**Validation Set of MLT17 categorized by language:** [OneDrive](https://1drv.ms/u/s!AtF4kB5K12hqgXCzVB5JUNSW3wRP?e=IrydBa)
 >
@@ -64,12 +60,6 @@ python setup.py build develop
 **Organize your data as follows:** 
 ```
 |- datasets
-   |- syntext1
-   |  |- train_images
-   |  └─ train_poly_pos.json  
-   |- syntext2
-   |  |- train_images
-   |  └─ train_poly_pos.json
    |- mlt
    |  |- train_images
    |  └─ train_poly_pos.json
@@ -94,22 +84,6 @@ python setup.py build develop
    |  |- test_poly.json
    |  |─ train_poly_pos.json
    |  └─ train_poly_rotate_pos.json
-   |- ctw1500
-   |  |- test_images
-   |  |- train_images_rotate
-   |  |- test_poly.json
-   |  └─ train_poly_rotate_pos.json
-   |- lsvt
-   |  |- train_images
-   |  └─ train_poly_pos.json
-   |- art
-   |  |- test_images
-   |  |- train_images_rotate
-   |  |- test_poly.json
-   |  |─ train_poly_pos.json
-   |  └─ train_poly_rotate_pos.json
-   |- evaluation
-   |  |- *.zip
 ```
 
 - ### Training
@@ -118,28 +92,27 @@ python setup.py build develop
 
 
 **1. Pre-train:**
-To pre-train the model for Total-Text and CTW1500, the config file should be `configs/SRformer/Pretrain/R_50_poly.yaml`. For ICDAR19 ArT, please use `configs/SRFormer/Pretrain_ArT/R_50_poly.yaml`. Please adjust the GPU number according to your situation.
+To pre-train the model for Total-Text and CTW1500, the config file should be `configs/SRformer/Pretrain/R_50_poly.yaml`.Please adjust the GPU number according to your situation.
 
 ```
-python tools/train_net.py --config-file ${CONFIG_FILE} --num-gpus 8
+python tools/train_net.py  --config-file configs/SRFormer/Pretrain/R_50_poly.yaml  --num-gpus 8
 ```
 
 **2. Fine-tune:**
 With the pre-trained model, use the following command to fine-tune it on the target benchmark. The pre-trained models are also provided.  For example:
 
 ```
-python tools/train_net.py --config-file configs/SRFormer/TotalText/R_50_poly.yaml --num-gpus 8
+python tools/train_net.py --config-file configs/SRFormer/TotalText/R_50_poly.yaml  --num-gpus 8
 ```
 
 - ### Evaluation
 ```
-python tools/train_net.py --config-file ${CONFIG_FILE} --num-gpus ${NUM_GPUS} --eval-only
+python tools/train_net.py --config-file configs/SRFormer/TotalText/R_50_poly.yaml --num-gpus 8 --eval-only
 ```
-For ICDAR19 ArT, a file named `art_submit.json` will be saved in `output/r_50_poly/art/finetune/inference/`. The json file can be directly submitted to [the ICDAR19-ArT website](https://rrc.cvc.uab.es/?ch=14) for evaluation.
 
 - ### Inference & Visualization
 ```
-python demo/demo.py --config-file ${CONFIG_FILE} --input ${IMAGES_FOLDER_OR_ONE_IMAGE_PATH} --output ${OUTPUT_PATH} --opts MODEL.WEIGHTS <MODEL_PATH>
+python demo/demo.py --config-file configs/SRFormer/TotalText/R_50_poly.yaml --input datasets/totaltext/test_images_rotate --output results --opts MODEL.WEIGHTS output/r_50_poly/totaltext/tune/model_best_tune.pth
 ```
 
 ## Citation
