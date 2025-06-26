@@ -93,6 +93,7 @@ python setup.py build develop
 
 **1. Pre-train:**
 To pre-train the model for Total-Text and CTW1500, the config file should be `configs/SRformer/Pretrain/R_50_poly.yaml`.Please adjust the GPU number according to your situation.
+复现的预训练模型：https://1drv.ms/u/c/71ea5bbc72455b58/EfLghbEMJyFNiaScG2lqLhEBqfWDCweKMgJvRRvhmZKqdg?e=4gdBwY
 
 ```
 python tools/train_net.py  --config-file configs/SRFormer/Pretrain/R_50_poly.yaml  --num-gpus 8
@@ -100,6 +101,7 @@ python tools/train_net.py  --config-file configs/SRFormer/Pretrain/R_50_poly.yam
 
 **2. Fine-tune:**
 With the pre-trained model, use the following command to fine-tune it on the target benchmark. The pre-trained models are also provided.  For example:
+复现的微调后完整模型：https://1drv.ms/u/c/71ea5bbc72455b58/EblIgtKh7jVNpNQvU1E4ZhIB1mVUJSXoiQeeB1n5FV3S2g?e=57tkh0
 
 ```
 python tools/train_net.py --config-file configs/SRFormer/TotalText/R_50_poly.yaml  --num-gpus 8
